@@ -22,73 +22,36 @@ class DataBaseUtil:
 
         }
 
-    def addSentence(self, sentence):
-        for word in sentence.split(' '):
-            self.addWord(word)
-
-    def addWord(self, word):
-        if word not in self.word2index:
-            self.word2index[word] = self.n_words
-            self.word2count[word] = 1
-            self.index2word[self.n_words] = word
-            self.n_words += 1
-        else:
-            self.word2count[word] += 1
-
-
-def readLangs():
-    print("Reading lines...")
-
-
-    lines_en = open('train_en.txt', encoding='utf-8').\
-        read().strip().split('\n')
-
-    lines_sql = open('train_sql.txt', encoding='utf-8').\
-        read().strip().split('\n')
-
-
-    # Split every line into pairs and normalize
-    pairs = []
-    for i in range(len(lines_en)):
-    	tokens_en = normalizeString(lines_en[i])
-    	tokens_sql = normalizeString(lines_sql[i])
-    	pairs.append([tokens_en, tokens_sql])
-
-    # Reverse pairs, make Lang instances
-    input_lang = LanguageUtil(lang1)
-    output_lang = LanguageUtil(lang2)	
-
-    return input_lang, output_lang, pairs
-
-def prepareData(lang1, lang2):
-    # input_lang, output_lang, pairs = readLangs(lang1, lang2)
-    # print("Read %s sentence pairs" % len(pairs))
-    # print("Trimmed to %s sentence pairs" % len(pairs))
-    # print("Counting words...")
-    # for pair in pairs:
-    #     input_lang.addSentence(pair[0])
-    #     output_lang.addSentence(pair[1])
-    # print("Counted words:")
-    # print(input_lang.name, input_lang.n_words)
-    # print(output_lang.name, output_lang.n_words)
-    # return input_lang, output_lang, pairs
-    readLangs()
-
-
-# prepareData()
-# print(random.choice(pairs))
+    
 
 def test():
     details = {"sel": 5, "conds": [[3, 0, "SOUTH AUSTRALIA"]], "agg": 0}
     teststr = Query(details["sel"], details["agg"], details["conds"])
     print (teststr);
 
-    db = records.Database('sqlite:///D:/PersonalDocs/UMass/Study Material/NLP/project/WikiSQL/data/train.db')
+    db = records.Database('sqlite:///data/train.db')
     conn = db.get_connection()
 
     table = Table.from_db(conn, "1-1000181-1")
     print (table)
     print (table.query_str(teststr))
+
+    table_data = {"id": "1-1000181-1", "header": [
+    "State/territory", "Text/background colour", "Format", "Current slogan", "Current series", "Notes"
+    ],
+    "types": ["text", "text", "text", "text", "text", "text"], "rows": [["Australian Capital Territory", "blue/white", "Yaa\u00b7nna", "ACT \u00b7 CELEBRATION OF A CENTURY 2013", "YIL\u00b700A", "Slogan screenprinted on plate"], ["New South Wales", "black/yellow", "aa\u00b7nn\u00b7aa", "NEW SOUTH WALES", "BX\u00b799\u00b7HI", "No slogan on current series"], ["New South Wales", "black/white", "aaa\u00b7nna", "NSW", "CPX\u00b712A", "Optional white slimline series"], ["Northern Territory", "ochre/white", "Ca\u00b7nn\u00b7aa", "NT \u00b7 OUTBACK AUSTRALIA", "CB\u00b706\u00b7ZZ", "New series began in June 2011"], ["Queensland", "maroon/white", "nnn\u00b7aaa", "QUEENSLAND \u00b7 SUNSHINE STATE", "999\u00b7TLG", "Slogan embossed on plate"], ["South Australia", "black/white", "Snnn\u00b7aaa", "SOUTH AUSTRALIA", "S000\u00b7AZD", "No slogan on current series"], ["Victoria", "blue/white", "aaa\u00b7nnn", "VICTORIA - THE PLACE TO BE", "ZZZ\u00b7562", "Current series will be exhausted this year"]], "name": "table_1000181_1"}
+
+    table_data = {
+        "id" : "1-1000181-1", "header": [
+            "State/territory", "Text/background colour", "Format", "Current slogan", "Current series", "Notes"
+        ],
+        "types" : [],
+        "rows" : []
+    }
+
+    t = Table(table_data["id"], table_data["header"], table_data["types"], table_data["rows"])
+    print (t)
+    print (t.query_str(teststr))
 
 test()
     # agg_str = header[query.sel_index]
