@@ -1,4 +1,0 @@
-select Notes from 1000181 where Current slogan = "SOUTH AUSTRALIA";
-select Current series from 1000181 where Notes = "New series began in June 2011";
-select Format from 1000181 where State/territory = "South Australia";
-select Text/background colour from 1000181 where State/territory = "Australian Capital Territory";

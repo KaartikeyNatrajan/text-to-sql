@@ -1,8 +1,6 @@
 from __future__ import unicode_literals, print_function, division
 from io import open
 import unicodedata
-import string
-import re
 import random
 
 import torch
@@ -14,6 +12,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 SOS_token = 0
 EOS_token = 1
+
 
 class LanguageUtil:
     def __init__(self, name):
@@ -36,6 +35,7 @@ class LanguageUtil:
         else:
             self.word2count[word] += 1
 
+
 # Turn a Unicode string to plain ASCII, thanks to
 # https://stackoverflow.com/a/518232/2809427
 def unicodeToAscii(s):
@@ -44,37 +44,35 @@ def unicodeToAscii(s):
         if unicodedata.category(c) != 'Mn'
     )
 
-# Lowercase, trim, and remove non-letter characters
 
+# Lowercase, trim, and remove non-letter characters
 def normalizeString(s):
     s = unicodeToAscii(s.lower().strip())
-    # s = re.sub(r"([.!?])", r" \1", s)
-    # s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
     return s
 
 
 def readLangs(lang1, lang2):
     print("Reading lines...")
 
-    lines_en = open('train_en.txt', encoding='utf-8').\
+    lines_en = open('data/train_en.txt', encoding='utf-8'). \
         read().strip().split('\n')
 
-    lines_sql = open('train_sql.txt', encoding='utf-8').\
+    lines_sql = open('data/train_sql.txt', encoding='utf-8'). \
         read().strip().split('\n')
-
 
     # Split every line into pairs and normalize
     pairs = []
     for i in range(len(lines_en)):
-    	tokens_en = normalizeString(lines_en[i])
-    	tokens_sql = normalizeString(lines_sql[i])
-    	pairs.append([tokens_en, tokens_sql])
+        tokens_en = normalizeString(lines_en[i])
+        tokens_sql = normalizeString(lines_sql[i])
+        pairs.append([tokens_en, tokens_sql])
 
     # Reverse pairs, make Lang instances
     input_lang = LanguageUtil(lang1)
-    output_lang = LanguageUtil(lang2)	
+    output_lang = LanguageUtil(lang2)
 
     return input_lang, output_lang, pairs
+
 
 def prepareData(lang1, lang2):
     input_lang, output_lang, pairs = readLangs(lang1, lang2)
@@ -90,5 +88,5 @@ def prepareData(lang1, lang2):
     return input_lang, output_lang, pairs
 
 
-input_lang, output_lang, pairs = prepareData('eng', 'sql')
-print(random.choice(pairs))
+# input_lang, output_lang, pairs = prepareData('eng', 'sql')
+# print(random.choice(pairs))

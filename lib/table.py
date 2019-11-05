@@ -87,10 +87,10 @@ class Table:
 
         if query.sel_index >= 0:
             query_str = 'SELECT {agg_str} AS result FROM {name} {where_str}'.format(agg_str=agg_str, name=self.name, where_str=where_str)
-            return [r.result for r in db.query(query_str, **where_map)]
+            return query_str, [r.result for r in db.query(query_str, **where_map)]
         else:
             query_str = 'SELECT {agg_str} FROM {name} {where_str}'.format(agg_str=agg_str, name=self.name, where_str=where_str)
-            return [[getattr(r, 'col{}'.format(i)) for i in range(len(self.header))] for r in db.query(query_str, **where_map)]
+            return query_str, [[getattr(r, 'col{}'.format(i)) for i in range(len(self.header))] for r in db.query(query_str, **where_map)]
 
     def query_str(self, query):
         agg_str = self.header[query.sel_index]
