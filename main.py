@@ -16,11 +16,11 @@ import torch.nn.functional as F
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 x = DataConversionUtil()
-MAX_LENGTH = 10
+MAX_LENGTH = 50
 SOS_token = 0
 EOS_token = 1
 
-# x.stringify_sql_data()
+x.stringify_sql_data()
 input_lang, output_lang, pairs = prepareData("en", "sql")
 print (pairs[:10])
 # print (input_lang.word2count)
@@ -137,7 +137,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
 
         print (encoder_output.shape)
         print (encoder_outputs.shape)
-        sys.exit(0)
+        # sys.exit(0)
         encoder_outputs[ei] = encoder_output[0, 0]
 
     decoder_input = torch.tensor([[SOS_token]], device=device)
@@ -192,7 +192,7 @@ def timeSince(since, percent):
     return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
 
 
-def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
+def trainIters(encoder, decoder, n_iters, print_every=10, plot_every=20, learning_rate=0.01):
     start = time.time()
     plot_losses = []
     print_loss_total = 0  # Reset every print_every
@@ -228,7 +228,7 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
     showPlot(plot_losses)
 
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+plt.switch_backend('TkAgg')
 import matplotlib.ticker as ticker
 import numpy as np
 
@@ -290,4 +290,4 @@ hidden_size = 256
 encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(device)
 attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
 
-trainIters(encoder1, attn_decoder1, 75000, print_every=5000)
+trainIters(encoder1, attn_decoder1, 100, print_every=10)

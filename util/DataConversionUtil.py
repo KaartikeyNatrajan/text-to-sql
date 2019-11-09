@@ -55,8 +55,8 @@ class DataConversionUtil:
         queries = pd.read_json("data/train.jsonl", lines=True)
 
         count = 0
-        stop_limit = len(queries)
-
+        # stop_limit = len(queries)
+        stop_limit = 100
         # iterate over the queries and convert each one to plain text sql
         for index, line in queries.iterrows():
             count += 1
