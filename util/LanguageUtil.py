@@ -1,18 +1,10 @@
 from __future__ import unicode_literals, print_function, division
 from io import open
 import unicodedata
-import random
-
 import torch
-import torch.nn as nn
-from torch import optim
-import torch.nn.functional as F
+from util.constants import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-SOS_token = 0
-EOS_token = 1
-
 
 class LanguageUtil:
     def __init__(self, name):
@@ -90,3 +82,19 @@ def prepareData(lang1, lang2):
 
 # input_lang, output_lang, pairs = prepareData('eng', 'sql')
 # print(random.choice(pairs))
+
+
+def indexesFromSentence(lang, sentence):
+    return [lang.word2index[word] for word in sentence.split(' ')]
+
+
+def tensorFromSentence(lang, sentence):
+    indexes = indexesFromSentence(lang, sentence)
+    indexes.append(EOS_token)
+    return torch.tensor(indexes, dtype=torch.long, device=device).view(-1, 1)
+
+
+def tensorsFromPair(pair, input_lang, output_lang):
+    input_tensor = tensorFromSentence(input_lang, pair[0])
+    target_tensor = tensorFromSentence(output_lang, pair[1])
+    return (input_tensor, target_tensor)
