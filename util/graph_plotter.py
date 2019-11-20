@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-plt.switch_backend('TkAgg')
+# plt.switch_backend('TkAgg')
 
 
 def showPlot(points):

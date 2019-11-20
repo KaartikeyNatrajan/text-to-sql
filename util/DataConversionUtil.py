@@ -21,7 +21,7 @@ class DataConversionUtil:
         q = Query.from_dict(json_line["sql"])
         t_id = json_line["table_id"]
         table = self.table_map[t_id]
-        t = Table(t_id, table["header"], table["types"], table["rows"])
+        t = Table("", table["header"], table["types"], table["rows"])
         return t, q
 
     @staticmethod
@@ -56,7 +56,7 @@ class DataConversionUtil:
 
         count = 0
         stop_limit = len(queries)
-        # stop_limit = 8000
+        # stop_limit = 25000
         # iterate over the queries and convert each one to plain text sql
         for index, line in queries.iterrows():
             count += 1

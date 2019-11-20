@@ -71,7 +71,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
     return loss.item() / target_length
 
 
-def trainIters(encoder, decoder, n_iters, print_every=10, plot_every=20, learning_rate=0.01):
+def trainIters(encoder, decoder, n_iters, print_every=10, plot_every=20, learning_rate=0.0001):
     plot_losses = []
     print_loss_total = 0  # Reset every print_every
     plot_loss_total = 0  # Reset every plot_every
@@ -79,7 +79,7 @@ def trainIters(encoder, decoder, n_iters, print_every=10, plot_every=20, learnin
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
     training_pairs = [tensorsFromPair(random.choice(pairs), input_lang, output_lang) for i in range(n_iters)]
-    criterion = nn.NLLLoss()
+    criterion = nn.NLLoss()
 
     for iter in range(1, n_iters + 1):
         training_pair = training_pairs[iter - 1]
@@ -140,19 +140,24 @@ def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
 
 
 def evaluateRandomly(encoder, decoder, n=10):
+    counter = 0
     for i in range(n):
         pair = random.choice(pairs)
         print('>', pair[0])
         print('=', pair[1])
         output_words, attentions = evaluate(encoder, decoder, pair[0])
         output_sentence = ' '.join(output_words)
+        if output_sentence[:-6] == pair[1]:
+            counter += 1
         print('<', output_sentence)
         print('')
+    print ("Correct Examples : {} out of {}".format(counter, n))
 
 
 hidden_size = 256
 encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(device)
+decoder1 = DecoderRNN(hidden_size, output_lang.n_words).to(device)
 attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
 
-trainIters(encoder1, attn_decoder1, 20000, print_every=500, plot_every=500)
-evaluateRandomly(encoder1, attn_decoder1)
+trainIters(encoder1, attn_decoder1, 100000, print_every=500, plot_every=1000)
+evaluateRandomly(encoder1, attn_decoder1, n = 1000)

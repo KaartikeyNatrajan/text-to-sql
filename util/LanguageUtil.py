@@ -1,21 +1,31 @@
 from __future__ import unicode_literals, print_function, division
+
+from collections import defaultdict
 from io import open
 import unicodedata
 import torch
 from util.constants import *
+import nltk
+import shlex
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class LanguageUtil:
     def __init__(self, name):
         self.name = name
-        self.word2index = {}
-        self.word2count = {}
+        self.word2index = defaultdict(int)
+        self.word2count = defaultdict(int)
         self.index2word = {0: "SOS", 1: "EOS"}
         self.n_words = 2  # Count SOS and EOS
 
     def addSentence(self, sentence):
-        for word in sentence.split(' '):
+        # try:
+        #     parts = shlex.split(sentence, posix=False)
+        # except:
+        #     parts = sentence.split(" ")
+
+        parts = sentence.split(" ")
+        for word in parts:
             self.addWord(word)
 
     def addWord(self, word):
@@ -85,7 +95,13 @@ def prepareData(lang1, lang2):
 
 
 def indexesFromSentence(lang, sentence):
-    return [lang.word2index[word] for word in sentence.split(' ')]
+    # try:
+    #     parts = shlex.split(sentence, posix=False)
+    # except:
+    #     parts = sentence.split(" ")
+
+    parts = sentence.split(" ")
+    return [lang.word2index[word] for word in parts]
 
 
 def tensorFromSentence(lang, sentence):
